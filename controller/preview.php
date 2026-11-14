@@ -174,6 +174,24 @@ final class preview
 			}
 		}
 
+		if (!$destination && ($plan['shadow'] || $this->request->variable('copy_topic', false))
+			&& $this->request->variable('copy_tracking', false))
+		{
+			$tracking = $this->db->sql_query('SELECT user_id, mark_time FROM ' . TOPICS_TRACK_TABLE . '
+				WHERE topic_id = ' . (int) $data['topic']['topic_id']);
+			$rows = $this->db->sql_fetchrowset($tracking);
+			$this->db->sql_freeresult($tracking);
+			foreach ($rows as $row)
+			{
+				$this->db->sql_query('INSERT INTO ' . \phpbb::$container->getParameter('tables.titania.track') . ' ' . $this->db->sql_build_array('INSERT', [
+					'track_type' => \phpbb\titania\ext::TITANIA_TOPIC,
+					'track_id' => (int) $result['topic']->topic_id,
+					'track_user_id' => (int) $row['user_id'],
+					'track_time' => (int) $row['mark_time'],
+				]));
+			}
+		}
+
 		if ($plan['shadow'] && $url)
 		{
 			$source->close($data['topic'], 'This topic has moved to Titania support.', $url, $this->root_path);
