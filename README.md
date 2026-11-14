@@ -8,12 +8,17 @@ Transfer phpBB forum discussions to Titania contribution support topics.
 ## Features
 
 Moderators can move selected forum replies from Quick-mod to a new or existing Titania support topic.
+- Move whole topics and leave a locked forum link to the Titania destination.
+- Copy topics and close the originals with a moderator reason and destination link.
+- Transfer supported attachments and optionally carry subscriptions and read markers to Titania.
+- Optionally notify the topic starter by private message.
 
 ## Requirements
 
 - phpBB 4.0.x
 - PHP 8.2 or newer
 - A working Titania installation on the same board
+  The disposable phpBB 4.0 test board used local Titania compatibility fixes.
 
 ## Installation
 
