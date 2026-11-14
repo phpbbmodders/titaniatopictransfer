@@ -87,12 +87,12 @@ final class preview
 		$this->db->sql_transaction('begin');
 		try
 		{
-			$url = $this->move_posts($source, $source->read($topic_id), $attachments);
+			$data = $source->read($topic_id);
+			$url = $this->move_posts($source, $data, $attachments);
 			if (!$this->db->sql_transaction('commit'))
 			{
 				throw new \RuntimeException('Unable to commit transfer.');
 			}
-			return $url;
 		}
 		catch (\Throwable $error)
 		{
@@ -100,6 +100,12 @@ final class preview
 			$attachments->rollback();
 			throw $error;
 		}
+		if ($this->request->variable('notify_author', false))
+		{
+			$author = reset($data['posts']);
+			$source->notify_author($author['author_id'], $url, $this->root_path);
+		}
+		return $url;
 	}
 
 	private function move_posts(forum_posts $source, array $data, attachments $attachments): string

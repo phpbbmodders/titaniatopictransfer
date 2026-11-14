@@ -146,4 +146,45 @@ final class forum_posts
 		$this->db->sql_query('UPDATE ' . TOPICS_TABLE . ' SET topic_status = ' . ITEM_LOCKED . '
 			WHERE topic_id = ' . (int) $topic['topic_id']);
 	}
+
+	public function notify_author(int $author_id, string $url, string $root_path): void
+	{
+		global $config, $user;
+		if (!$config['allow_privmsg'] || !$this->auth->acl_get('u_sendpm')
+			|| $author_id <= ANONYMOUS || $author_id === (int) $user->data['user_id'])
+		{
+			return;
+		}
+
+		$result = $this->db->sql_query('SELECT user_allow_pm, user_type FROM ' . USERS_TABLE . '
+			WHERE user_id = ' . $author_id);
+		$recipient = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+		if (!$recipient || !$recipient['user_allow_pm']
+			|| !in_array((int) $recipient['user_type'], [USER_NORMAL, USER_FOUNDER], true))
+		{
+			return;
+		}
+
+		require_once $root_path . 'includes/functions_privmsgs.php';
+		$message = "Posts from your forum topic were transferred to Titania support.\n\n" . $url;
+		$uid = $bitfield = '';
+		$options = 0;
+		generate_text_for_storage($message, $uid, $bitfield, $options, false, true, false);
+		$data = [
+			'from_user_id' => (int) $user->data['user_id'],
+			'from_user_ip' => $user->ip,
+			'from_username' => $user->data['username'],
+			'address_list' => ['u' => [$author_id => 'to']],
+			'icon_id' => 0,
+			'enable_bbcode' => false,
+			'enable_smilies' => false,
+			'enable_urls' => true,
+			'enable_sig' => false,
+			'bbcode_uid' => $uid,
+			'bbcode_bitfield' => $bitfield,
+			'message' => $message,
+		];
+		submit_pm('post', 'Forum posts transferred to Titania support', $data);
+	}
 }
