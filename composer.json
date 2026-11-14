@@ -1,0 +1,16 @@
+{
+    "name": "phpbbmodders/titaniatopictransfer",
+    "type": "phpbb-extension",
+    "description": "Moderator transfers from phpBB forums to Titania support.",
+    "version": "0.1.0-dev",
+    "license": "GPL-2.0-only",
+    "require": {
+        "php": ">=8.2"
+    },
+    "extra": {
+        "display-name": "Titania Topic Transfer",
+        "soft-require": {
+            "phpbb/phpbb": "4.0.*@dev"
+        }
+    }
+}
