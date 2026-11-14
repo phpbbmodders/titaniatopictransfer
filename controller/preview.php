@@ -160,6 +160,20 @@ final class preview
 		}
 		$url = html_entity_decode($result['topic']->get_url(), ENT_QUOTES);
 		$this->verify_posts((int) $result['topic']->topic_id, $result['posts']);
+		if (($plan['shadow'] || $this->request->variable('copy_topic', false)) && $url
+			&& $this->request->variable('copy_subscriptions', false))
+		{
+			$subscriptions = \phpbb::$container->get('phpbb.titania.subscriptions');
+			$watchers = $this->db->sql_query('SELECT user_id FROM ' . TOPICS_WATCH_TABLE . '
+				WHERE topic_id = ' . (int) $data['topic']['topic_id']);
+			$rows = $this->db->sql_fetchrowset($watchers);
+			$this->db->sql_freeresult($watchers);
+			foreach ($rows as $row)
+			{
+				$subscriptions->subscribe(\phpbb\titania\ext::TITANIA_TOPIC, (int) $result['topic']->topic_id, (int) $row['user_id']);
+			}
+		}
+
 		if ($plan['shadow'] && $url)
 		{
 			$source->close($data['topic'], 'This topic has moved to Titania support.', $url, $this->root_path);
