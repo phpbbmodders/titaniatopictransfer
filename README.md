@@ -7,7 +7,7 @@ Transfer phpBB forum discussions to Titania contribution support topics.
 
 ## Features
 
-This development branch provides the source-post selection rules for the transfer workflow.
+Moderators can move selected forum replies from Quick-mod to a new or existing Titania support topic.
 
 ## Requirements
 
