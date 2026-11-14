@@ -1,4 +1,4 @@
-phpbbmodders_titania_transfer:
+phpbbmodders_titaniatopictransfer_transfer:
     path: /titania-transfer/{topic_id}
     defaults: { _controller: phpbbmodders.titaniatopictransfer.preview:display }
     requirements:

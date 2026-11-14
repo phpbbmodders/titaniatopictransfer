@@ -1,8 +1,15 @@
 name: Lint
 
+# PHP syntax check on the lowest PHP version this extension supports and the
+# newest PHP. tests.yml runs the tests, code sniffer and
+# EPV on phpBB 4.0.
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read

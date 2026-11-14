@@ -2,30 +2,31 @@ name: Tests
 
 on:
   push:
-  pull_request:
+    branches:
+      - main
 
-permissions:
-  contents: read
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  tests:
-    name: PHP ${{ matrix.php }} tests
-    runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        php: ['8.2', '8.4']
-    steps:
-      - uses: actions/checkout@v4
+  # phpBB 4.0 (master) only: this first version targets the Titania 4.0.x branch
+  call-tests-master:
+    name: Extension tests (phpBB master / 4.0)
+    uses: phpbb-extensions/test-framework/.github/workflows/tests.yml@master
+    with:
+      EXTNAME: phpbbmodders/titaniatopictransfer
+      # EPV runs in the epv job below instead
+      EPV: 0
+      PHPBB_BRANCH: 'master'
+      RUN_FUNCTIONAL_TESTS: 0
+      PRIMARY_PHP_VERSION: '8.2'
+      PHP_VERSION_MATRIX: '["8.2", "8.3", "8.4"]'
 
-      - name: Set up PHP ${{ matrix.php }}
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          coverage: none
-          tools: composer:v2
-
-      - name: Run transfer tests
-        run: |
-          for test in tests/*.php; do
-            php "$test" || exit 1
-          done
+  # EPV (Extension Pre Validator), failing on any Fatal or Error finding not
+  # listed in .github/epv-allowed.txt
+  epv:
+    uses: phpbbmodders/.github/.github/workflows/epv.yml@v1
+    with:
+      EXTNAME: phpbbmodders/titaniatopictransfer
+      PHPBB_BRANCHES: '["master"]'

@@ -1,11 +1,12 @@
 # Shared line endings and binary files
 * text=auto eol=lf
-*.jpeg binary
-
 *.gif binary
-*.png binary
+*.jpeg binary
 *.jpg binary
+*.png binary
+*.webp binary
 *.phar binary
+*.zip binary
 
 tests/			export-ignore
 .github/		export-ignore
@@ -13,6 +14,5 @@ tests/			export-ignore
 .gitattributes	export-ignore
 phpunit.xml.*	export-ignore
 README.md		export-ignore
-docs/images/	export-ignore
-*.zip binary
-*.webp binary
+docs/			export-ignore
+.editorconfig	export-ignore

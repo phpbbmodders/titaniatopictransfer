@@ -8,11 +8,19 @@
  *
  */
 
+/**
+ * DO NOT CHANGE
+ */
 if (!defined('IN_PHPBB'))
 {
 	exit;
 }
 
-$lang = array_merge($lang ?? [], [
-	'TITANIA_TRANSFER_NOT_ENABLEABLE' => 'Titania Topic Transfer requires phpBB 4.0.x and PHP 8.2 or newer.',
+if (empty($lang) || !is_array($lang))
+{
+	$lang = [];
+}
+
+$lang = array_merge($lang, [
+	'TITANIATOPICTRANSFER_NOT_ENABLEABLE'	=> 'Titania Topic Transfer could not be enabled. It needs phpBB 4.0 and PHP 8.2 or later.',
 ]);

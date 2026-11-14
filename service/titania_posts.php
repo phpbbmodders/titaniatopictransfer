@@ -10,6 +10,7 @@
 
 namespace phpbbmodders\titaniatopictransfer\service;
 
+use phpbb\exception\runtime_exception;
 use phpbb\titania\ext;
 
 /**
@@ -18,17 +19,28 @@ use phpbb\titania\ext;
  */
 final class titania_posts
 {
-	public function write(\titania_contribution $contribution, ?\titania_topic $topic, string $subject, array $posts): array
+	/**
+	 * Write the posts as one Titania support topic, new or existing.
+	 *
+	 * @param \titania_contribution $contribution Approved contribution the topic belongs to
+	 * @param \titania_topic|null   $topic        Existing support topic, or null to start one
+	 * @param string                $subject      Subject for a new topic
+	 * @param array                 $posts        Posts as returned by forum_posts::read(), in topic order
+	 * @return array{topic: \titania_topic, posts: array<int, int>} Titania post IDs keyed by forum post ID
+	 * @throws runtime_exception When the destination does not belong to the contribution
+	 * @throws \RuntimeException When Titania cannot save a post
+	 */
+	public function write(\titania_contribution $contribution, \titania_topic|null $topic, string $subject, array $posts): array
 	{
 		if (!$posts || !$contribution->contrib_id)
 		{
-			throw new \InvalidArgumentException('A contribution and at least one post are required.');
+			throw new runtime_exception('TITANIATOPICTRANSFER_ERR_NO_SELECTION');
 		}
 
 		if ($topic !== null && (!$topic->topic_id || (int) $topic->parent_id !== (int) $contribution->contrib_id
 			|| (int) $topic->topic_type !== ext::TITANIA_SUPPORT))
 		{
-			throw new \InvalidArgumentException('The destination must be a support topic in the selected contribution.');
+			throw new runtime_exception('TITANIATOPICTRANSFER_ERR_DESTINATION');
 		}
 
 		$destination_posts = [];
@@ -55,7 +67,7 @@ final class titania_posts
 			$post->post_text_options = $source['options'];
 			if ($post->submit() !== true || !$post->post_id)
 			{
-				throw new \RuntimeException('Titania could not save the support post.');
+				throw new \RuntimeException('TITANIATOPICTRANSFER_ERR_FAILED');
 			}
 
 			$topic = $post->topic;
