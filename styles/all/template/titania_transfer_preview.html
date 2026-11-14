@@ -32,9 +32,7 @@
 
 			<fieldset>
 				<legend>{{ lang('TITANIATOPICTRANSFER_SOURCE') }}</legend>
-				<dl>
-					<dd><label><input type="checkbox" name="copy_topic" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_TOPIC') }}</label></dd>
-				</dl>
+				<p><label><input type="checkbox" name="copy_topic" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_TOPIC') }}</label></p>
 				<dl>
 					<dt><label for="transfer_reason">{{ lang('TITANIATOPICTRANSFER_REASON') ~ lang('COLON') }}</label><br><span id="transfer_reason_explain">{{ lang('TITANIATOPICTRANSFER_REASON_EXPLAIN') }}</span></dt>
 					<dd><input type="text" class="inputbox" id="transfer_reason" name="reason" maxlength="255" aria-describedby="transfer_reason_explain"></dd>
@@ -43,16 +41,16 @@
 
 			<fieldset>
 				<legend>{{ lang('TITANIATOPICTRANSFER_OPTIONS') }}</legend>
-				<dl><dd><label><input type="checkbox" name="copy_subscriptions" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_SUBSCRIPTIONS') }}</label></dd></dl>
-				<dl><dd><label><input type="checkbox" name="copy_tracking" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_TRACKING') }}</label></dd></dl>
-				<dl><dd><label><input type="checkbox" name="notify_author" value="1"> {{ lang('TITANIATOPICTRANSFER_NOTIFY_AUTHOR') }}</label></dd></dl>
+				<p><label><input type="checkbox" name="copy_subscriptions" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_SUBSCRIPTIONS') }}</label></p>
+				<p><label><input type="checkbox" name="copy_tracking" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_TRACKING') }}</label></p>
+				<p><label><input type="checkbox" name="notify_author" value="1"> {{ lang('TITANIATOPICTRANSFER_NOTIFY_AUTHOR') }}</label></p>
 			</fieldset>
 		</div>
 	</div>
 
 	<fieldset class="submit-buttons">
 		{{ S_FORM_TOKEN }}
-		<button class="button1" type="submit" name="submit" value="1">{{ lang('TITANIATOPICTRANSFER') }}</button>
+		<button class="button1" type="submit" name="submit">{{ lang('TITANIATOPICTRANSFER') }}</button>
 	</fieldset>
 </form>
 

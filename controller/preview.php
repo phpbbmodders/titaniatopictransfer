@@ -118,7 +118,7 @@ final class preview
 			{
 				$this->template->assign_block_vars('transfer_posts', [
 					'ID'		=> $post_id,
-					'LABEL'		=> $this->language->lang('TITANIATOPICTRANSFER_POST_BY', $post['subject'], $post['author_name']),
+					'LABEL'		=> $this->language->lang('TITANIATOPICTRANSFER_POST_BY', $post['subject'], $post['author_name'], $this->user->format_date($post['time']), $post_id),
 				]);
 			}
 		}
