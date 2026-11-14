@@ -12,6 +12,7 @@ namespace phpbbmodders\titaniatopictransfer\controller;
 
 use phpbb\exception\http_exception;
 use phpbbmodders\titaniatopictransfer\service\forum_posts;
+use phpbbmodders\titaniatopictransfer\service\attachments;
 use Symfony\Component\HttpFoundation\Response;
 
 final class preview
@@ -82,10 +83,11 @@ final class preview
 
 	private function submit(forum_posts $source, int $topic_id): string
 	{
+		$attachments = new attachments();
 		$this->db->sql_transaction('begin');
 		try
 		{
-			$url = $this->move_posts($source, $source->read($topic_id));
+			$url = $this->move_posts($source, $source->read($topic_id), $attachments);
 			if (!$this->db->sql_transaction('commit'))
 			{
 				throw new \RuntimeException('Unable to commit transfer.');
@@ -95,11 +97,12 @@ final class preview
 		catch (\Throwable $error)
 		{
 			$this->db->sql_transaction('rollback');
+			$attachments->rollback();
 			throw $error;
 		}
 	}
 
-	private function move_posts(forum_posts $source, array $data): string
+	private function move_posts(forum_posts $source, array $data, attachments $attachments): string
 	{
 		$selected = $this->request->variable('posts', [0]);
 		$plan = (new \phpbbmodders\titaniatopictransfer\service\transfer_plan())->build(array_keys($data['posts']), $selected, $this->request->variable('copy_topic', false));
@@ -122,14 +125,6 @@ final class preview
 		if ($plan['close'] && $reason === '')
 		{
 			throw new \DomainException('Enter a closing reason.');
-		}
-
-		foreach ($posts as $post)
-		{
-			if ($post['has_attachment'])
-			{
-				throw new \DomainException('Posts with attachments cannot be transferred yet.');
-			}
 		}
 
 		$contribution_id = $this->request->variable('contribution_id', 0);
@@ -161,6 +156,13 @@ final class preview
 		$result = (new \phpbbmodders\titaniatopictransfer\service\titania_posts())->write(
 			$contribution, $destination, $data['topic']['topic_title'], $posts
 		);
+		foreach ($result['posts'] as $source_id => $destination_id)
+		{
+			if ($posts[$source_id]['has_attachment'])
+			{
+				$attachments->copy($source_id, $destination_id);
+			}
+		}
 		$url = html_entity_decode($result['topic']->get_url(), ENT_QUOTES);
 		$this->verify_posts((int) $result['topic']->topic_id, $result['posts']);
 		if (!$url || ($plan['remove'] && delete_posts('post_id', $plan['remove']) !== count($plan['remove'])))

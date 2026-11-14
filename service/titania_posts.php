@@ -45,6 +45,7 @@ final class titania_posts
 				]);
 			}
 
+			$post->post_attachment = $source['has_attachment'];
 			$post->post_subject = $topic === null ? $subject : $source['subject'];
 			$post->post_user_id = $source['author_id'];
 			$post->post_time = $source['time'];
