@@ -1,0 +1,23 @@
+services:
+    phpbbmodders.titaniatopictransfer.listener:
+        class: phpbbmodders\titaniatopictransfer\event\moderation
+        arguments:
+            - '@auth'
+            - '@language'
+            - '@ext.manager'
+            - '@request'
+            - '@controller.helper'
+        tags:
+            - { name: event.listener }
+
+    phpbbmodders.titaniatopictransfer.preview:
+        class: phpbbmodders\titaniatopictransfer\controller\preview
+        arguments:
+            - '@auth'
+            - '@ext.manager'
+            - '@controller.helper'
+            - '@template'
+            - '@language'
+            - '@dbal.conn'
+            - '@request'
+            - '%core.root_path%'

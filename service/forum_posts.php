@@ -14,6 +14,37 @@ final class forum_posts
 	{
 	}
 
+	/**
+	 * Ensure the selected posts can be published to a public support topic.
+	 *
+	 * Check the effective anonymous ACL, including user and group roles.
+	 */
+	public function require_public_source(int $forum_id, array $selected_posts): void
+	{
+		$readers = $this->auth->acl_get_list(ANONYMOUS, 'f_read', $forum_id);
+		$listers = $this->auth->acl_get_list(ANONYMOUS, 'f_list', $forum_id);
+
+		$result = $this->db->sql_query('SELECT forum_password FROM ' . FORUMS_TABLE . '
+			WHERE forum_id = ' . $forum_id);
+		$forum = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		if (!$forum || $forum['forum_password'] !== ''
+			|| !in_array(ANONYMOUS, $readers[$forum_id]['f_read'] ?? [])
+			|| !in_array(ANONYMOUS, $listers[$forum_id]['f_list'] ?? []))
+		{
+			throw new \DomainException('The source forum is restricted.');
+		}
+
+		foreach ($selected_posts as $post)
+		{
+			if (!$post['approved'])
+			{
+				throw new \DomainException('Only approved posts can be transferred to public support.');
+			}
+		}
+	}
+
 	public function read(int $topic_id): array
 	{
 		$result = $this->db->sql_query('SELECT topic_id, forum_id, topic_title, topic_first_post_id, topic_visibility, topic_moved_id

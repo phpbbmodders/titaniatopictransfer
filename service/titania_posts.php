@@ -10,7 +10,7 @@ use phpbb\titania\ext;
  */
 final class titania_posts
 {
-	public function write(\titania_contribution $contribution, ?\titania_topic $topic, string $subject, array $posts): \titania_topic
+	public function write(\titania_contribution $contribution, ?\titania_topic $topic, string $subject, array $posts): array
 	{
 		if (!$posts || !$contribution->contrib_id)
 		{
@@ -23,9 +23,10 @@ final class titania_posts
 			throw new \InvalidArgumentException('The destination must be a support topic in the selected contribution.');
 		}
 
-		foreach ($posts as $source)
+		$destination_posts = [];
+		foreach ($posts as $source_id => $source)
 		{
-			$post = new \titania_post(ext::TITANIA_SUPPORT, $topic ?? false);
+			$post = new \titania_post(ext::TITANIA_SUPPORT, $topic ?? new support_topic());
 			if ($topic === null)
 			{
 				$post->topic->parent_id = $contribution->contrib_id;
@@ -49,8 +50,9 @@ final class titania_posts
 			}
 
 			$topic = $post->topic;
+			$destination_posts[$source_id] = (int) $post->post_id;
 		}
 
-		return $topic;
+		return ['topic' => $topic, 'posts' => $destination_posts];
 	}
 }
