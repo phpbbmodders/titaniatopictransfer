@@ -16,6 +16,21 @@ Lets moderators transfer forum topics and posts to Titania contribution support 
 - Each transfer runs as one database transaction and is checked before the forum side changes; if any step fails, nothing changes. Every transfer goes into the **moderator log**.
 - Only topics in forums guests can read, with approved posts, can go to public support.
 
+## Screenshots
+
+<table>
+<tr>
+<td><a href="docs/images/screenshots/transfer-page.png"><img src="docs/images/screenshots/transfer-page.png" width="440" height="241" alt="The transfer page with two replies selected"></a></td>
+<td><a href="docs/images/screenshots/transfer-titania-topic.png"><img src="docs/images/screenshots/transfer-titania-topic.png" width="440" height="244" alt="The transferred replies in a Titania support topic"></a></td>
+</tr>
+<tr>
+<td><a href="docs/images/screenshots/transfer-quickmod.png"><img src="docs/images/screenshots/transfer-quickmod.png" width="440" height="309" alt="Transfer to Titania support in the Quick-mod tools"></a></td>
+<td><a href="docs/images/screenshots/transfer-closed-topic.png"><img src="docs/images/screenshots/transfer-closed-topic.png" width="440" height="88" alt="The closing reply with the reason and link"></a></td>
+</tr>
+</table>
+
+Click an image for the full size, or see [all screenshots with captions](docs/images/screenshots/README.md).
+
 ## Permissions
 
 The option shows for moderators who have **Can move topics** in the forum and Titania's **Can moderate posts** permission. Removing posts also needs **Can delete posts**, and locking the forum topic needs **Can lock topics** and **Can reply to topics** in that forum.
@@ -24,7 +39,7 @@ The option shows for moderators who have **Can move topics** in the forum and Ti
 
 - phpBB 4.0
 - PHP 8.2 or later
-- [Titania](https://github.com/phpbb/customisation-db) (the Customisation Database) from its `4.0.x` branch, installed on the same board. That branch does not yet run on phpBB 4.0 without fixes; the extension was tested with five fixes that have not been merged into Titania yet.
+- [Titania](https://github.com/phpbb/customisation-db) (the Customisation Database) from its `4.0.x` branch, installed on the same board. That branch does not yet run on phpBB 4.0 without fixes; the extension was tested with fixes that have not been merged into Titania yet.
 
 ## Installation
 

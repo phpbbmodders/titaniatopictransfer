@@ -28,6 +28,7 @@ use phpbbmodders\titaniatopictransfer\service\transfer_plan;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * The transfer page reached from a topic's Quick-mod tools: shows the topic's
@@ -237,7 +238,13 @@ final class preview
 		}
 
 		$titania_topic_id = (int) $result['topic']->topic_id;
-		$url = html_entity_decode($result['topic']->get_url(), ENT_QUOTES);
+		// An absolute URL: it goes into the closing reply and the private message,
+		// which are read from other pages, and Titania's own get_url() is relative.
+		$url = $this->helper->route('phpbb.titania.contrib.support.topic', [
+			'contrib_type'	=> $contribution->type->url,
+			'contrib'		=> $contribution->contrib_name_clean,
+			'topic_id'		=> $titania_topic_id,
+		], false, false, UrlGeneratorInterface::ABSOLUTE_URL);
 		if ($url === '')
 		{
 			throw new \RuntimeException('TITANIATOPICTRANSFER_ERR_FAILED');
