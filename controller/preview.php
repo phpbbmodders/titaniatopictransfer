@@ -111,13 +111,8 @@ final class preview
 		$source->require_public_source($forum, $posts);
 
 		$reason = trim($this->request->variable('reason', '', true));
-		if ($plan['shadow'])
-		{
-			throw new \DomainException('Choose Copy and close to transfer every post.');
-		}
-
 		if (($plan['remove'] && !$this->auth->acl_get('m_delete', $forum))
-			|| ($plan['close'] && (!$this->auth->acl_get('m_lock', $forum) || !$this->auth->acl_get('f_reply', $forum))))
+			|| (($plan['close'] || $plan['shadow']) && (!$this->auth->acl_get('m_lock', $forum) || !$this->auth->acl_get('f_reply', $forum))))
 		{
 			throw new http_exception(403, 'NO_AUTH_OPERATION');
 		}
@@ -165,6 +160,11 @@ final class preview
 		}
 		$url = html_entity_decode($result['topic']->get_url(), ENT_QUOTES);
 		$this->verify_posts((int) $result['topic']->topic_id, $result['posts']);
+		if ($plan['shadow'] && $url)
+		{
+			$source->close($data['topic'], 'This topic has moved to Titania support.', $url, $this->root_path);
+		}
+
 		if (!$url || ($plan['remove'] && delete_posts('post_id', $plan['remove']) !== count($plan['remove'])))
 		{
 			throw new \RuntimeException('The transfer could not be completed.');
