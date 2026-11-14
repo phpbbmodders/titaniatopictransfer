@@ -12,5 +12,21 @@
         "soft-require": {
             "phpbb/phpbb": "4.0.*@dev"
         }
-    }
+    },
+    "homepage": "https://www.phpbbmodders.com/",
+    "authors": [
+        {
+            "name": "phpBB Modders",
+            "email": "board@phpbbmodders.com",
+            "homepage": "https://www.phpbbmodders.com/",
+            "role": "Extension Developer"
+        }
+    ],
+    "keywords": [
+        "phpbb",
+        "extension",
+        "moderation",
+        "titania",
+        "support"
+    ]
 }
