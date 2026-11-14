@@ -100,4 +100,50 @@ final class forum_posts
 
 		return ['topic' => $topic, 'posts' => [$opening_id => $posts[$opening_id]] + $posts];
 	}
+
+	public function close(array $topic, string $reason, string $url, string $root_path): void
+	{
+		require_once $root_path . 'includes/functions_posting.php';
+		$message = $reason . "\n\n" . $url;
+		$uid = $bitfield = '';
+		$options = 0;
+		$subject = $topic['topic_title'];
+		generate_text_for_storage($message, $uid, $bitfield, $options, false, true, false);
+		$data = [
+			'forum_id' => (int) $topic['forum_id'],
+			'topic_id' => (int) $topic['topic_id'],
+			'topic_title' => $subject,
+			'icon_id' => 0,
+			'enable_bbcode' => false,
+			'enable_smilies' => false,
+			'enable_urls' => true,
+			'enable_sig' => false,
+			'message' => $message,
+			'message_md5' => md5($message),
+			'bbcode_bitfield' => $bitfield,
+			'bbcode_uid' => $uid,
+			'post_edit_locked' => 0,
+			'force_approved_state' => ITEM_APPROVED,
+			'enable_indexing' => true,
+			'notify' => false,
+			'notify_set' => false,
+		];
+		// submit_post recreates this marker. A duplicate insert rolls back the
+		// enclosing transaction on SQLite.
+		global $config, $user;
+		if ($config['load_db_track'])
+		{
+			$this->db->sql_query('DELETE FROM ' . TOPICS_POSTED_TABLE . '
+				WHERE topic_id = ' . (int) $topic['topic_id'] . ' AND user_id = ' . (int) $user->data['user_id']);
+		}
+
+		$poll = [];
+		submit_post('reply', $subject, '', POST_NORMAL, $poll, $data);
+		if (empty($data['post_id']))
+		{
+			throw new \RuntimeException('The closing post could not be saved.');
+		}
+		$this->db->sql_query('UPDATE ' . TOPICS_TABLE . ' SET topic_status = ' . ITEM_LOCKED . '
+			WHERE topic_id = ' . (int) $topic['topic_id']);
+	}
 }

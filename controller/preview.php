@@ -85,7 +85,7 @@ final class preview
 		$this->db->sql_transaction('begin');
 		try
 		{
-			$url = $this->move_replies($source, $source->read($topic_id));
+			$url = $this->move_posts($source, $source->read($topic_id));
 			if (!$this->db->sql_transaction('commit'))
 			{
 				throw new \RuntimeException('Unable to commit transfer.');
@@ -99,22 +99,29 @@ final class preview
 		}
 	}
 
-	private function move_replies(forum_posts $source, array $data): string
+	private function move_posts(forum_posts $source, array $data): string
 	{
 		$selected = $this->request->variable('posts', [0]);
-		$plan = (new \phpbbmodders\titaniatopictransfer\service\transfer_plan())->build(array_keys($data['posts']), $selected);
+		$plan = (new \phpbbmodders\titaniatopictransfer\service\transfer_plan())->build(array_keys($data['posts']), $selected, $this->request->variable('copy_topic', false));
 		$posts = array_intersect_key($data['posts'], array_fill_keys($plan['transfer'], true));
 		$forum = (int) $data['topic']['forum_id'];
 		$source->require_public_source($forum, $posts);
 
-		if ($plan['shadow'] || $plan['close'])
+		$reason = trim($this->request->variable('reason', '', true));
+		if ($plan['shadow'])
 		{
-			throw new \DomainException('Select replies while leaving the opening post in the forum.');
+			throw new \DomainException('Choose Copy and close to transfer every post.');
 		}
 
-		if (!$this->auth->acl_get('m_delete', $forum))
+		if (($plan['remove'] && !$this->auth->acl_get('m_delete', $forum))
+			|| ($plan['close'] && (!$this->auth->acl_get('m_lock', $forum) || !$this->auth->acl_get('f_reply', $forum))))
 		{
 			throw new http_exception(403, 'NO_AUTH_OPERATION');
+		}
+
+		if ($plan['close'] && $reason === '')
+		{
+			throw new \DomainException('Enter a closing reason.');
 		}
 
 		foreach ($posts as $post)
@@ -156,11 +163,16 @@ final class preview
 		);
 		$url = html_entity_decode($result['topic']->get_url(), ENT_QUOTES);
 		$this->verify_posts((int) $result['topic']->topic_id, $result['posts']);
-		if (!$url || delete_posts('post_id', $plan['remove']) !== count($plan['remove']))
+		if (!$url || ($plan['remove'] && delete_posts('post_id', $plan['remove']) !== count($plan['remove'])))
 		{
 			throw new \RuntimeException('The transfer could not be completed.');
 		}
 		$this->verify_posts((int) $result['topic']->topic_id, $result['posts']);
+
+		if ($plan['close'])
+		{
+			$source->close($data['topic'], $reason, $url, $this->root_path);
+		}
 
 		return $url;
 	}
