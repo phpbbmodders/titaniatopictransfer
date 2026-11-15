@@ -39,7 +39,7 @@ The option shows for moderators who have **Can move topics** in the forum and Ti
 
 - phpBB 4.0
 - PHP 8.2 or later
-- [Titania](https://github.com/phpbb/customisation-db) (the Customisation Database) from its `4.0.x` branch, installed on the same board. That branch does not yet run on phpBB 4.0 without fixes; the extension was tested with fixes that have not been merged into Titania yet.
+- [Titania](https://github.com/phpbb/customisation-db) (the Customisation Database) from its `4.0.x` branch, installed on the same board. That branch does not yet run on phpBB 4.0 without fixes. Until they are merged into Titania, follow [Installing Titania on phpBB 4.0](https://github.com/phpbbmodders/titaniatopictransfer/wiki/Installing-Titania-on-phpBB-4.0) to use the branch with the fixes the extension was tested with.
 
 ## Installation
 
