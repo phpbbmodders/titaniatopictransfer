@@ -1,0 +1,56 @@
+services:
+    phpbbmodders.titaniatopictransfer.listener:
+        class: phpbbmodders\titaniatopictransfer\event\moderation
+        arguments:
+            - '@auth'
+            - '@language'
+            - '@ext.manager'
+            - '@request'
+            - '@controller.helper'
+        tags:
+            - { name: event.listener }
+
+    phpbbmodders.titaniatopictransfer.transfer_plan:
+        class: phpbbmodders\titaniatopictransfer\service\transfer_plan
+
+    phpbbmodders.titaniatopictransfer.forum_posts:
+        class: phpbbmodders\titaniatopictransfer\service\forum_posts
+        arguments:
+            - '@dbal.conn'
+            - '@auth'
+            - '@config'
+            - '@user'
+            - '@language'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+
+    phpbbmodders.titaniatopictransfer.attachments:
+        class: phpbbmodders\titaniatopictransfer\service\attachments
+        shared: false
+        arguments:
+            - '@dbal.conn'
+            - '@storage.attachment'
+            - '@service_container'
+
+    phpbbmodders.titaniatopictransfer.titania_posts:
+        class: phpbbmodders\titaniatopictransfer\service\titania_posts
+
+    phpbbmodders.titaniatopictransfer.preview:
+        class: phpbbmodders\titaniatopictransfer\controller\preview
+        arguments:
+            - '@auth'
+            - '@ext.manager'
+            - '@controller.helper'
+            - '@template'
+            - '@language'
+            - '@dbal.conn'
+            - '@request'
+            - '@log'
+            - '@user'
+            - '@phpbbmodders.titaniatopictransfer.forum_posts'
+            - '@phpbbmodders.titaniatopictransfer.attachments'
+            - '@phpbbmodders.titaniatopictransfer.titania_posts'
+            - '@phpbbmodders.titaniatopictransfer.transfer_plan'
+            - '@service_container'
+            - '%core.root_path%'
+            - '%core.php_ext%'

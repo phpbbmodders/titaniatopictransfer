@@ -1,1 +1,18 @@
+# Shared line endings and binary files
 * text=auto eol=lf
+*.gif binary
+*.jpeg binary
+*.jpg binary
+*.png binary
+*.webp binary
+*.phar binary
+*.zip binary
+
+tests/			export-ignore
+.github/		export-ignore
+.gitignore		export-ignore
+.gitattributes	export-ignore
+phpunit.xml.*	export-ignore
+README.md		export-ignore
+docs/			export-ignore
+.editorconfig	export-ignore

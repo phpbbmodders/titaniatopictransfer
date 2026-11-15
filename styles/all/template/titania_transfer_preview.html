@@ -1,0 +1,57 @@
+{% include 'overall_header.html' %}
+
+<h2 class="topic-title" id="transfer_topic"><a href="{{ U_TRANSFER_TOPIC }}">{{ TRANSFER_TOPIC_TITLE }}</a></h2>
+
+<form id="titania_transfer" method="post" action="{{ S_TRANSFER_ACTION }}" aria-labelledby="transfer_heading transfer_topic">
+<div class="panel">
+	<div class="inner">
+	<h3 id="transfer_heading">{{ lang('TITANIATOPICTRANSFER') }}</h3>
+	{% if TRANSFER_ERROR %}<p class="error" role="alert">{{ TRANSFER_ERROR|e }}</p>{% endif %}
+
+	<fieldset aria-labelledby="transfer_posts_heading">
+		<h4 id="transfer_posts_heading">{{ lang('TITANIATOPICTRANSFER_POSTS') }}</h4>
+		<p id="transfer_posts_explain">{{ lang('TITANIATOPICTRANSFER_POSTS_EXPLAIN') }}</p>
+		<ul class="titania-transfer-posts" aria-describedby="transfer_posts_explain">
+		{% for post in transfer_posts %}
+			<li><label><input type="checkbox" name="posts[]" value="{{ post.ID }}"> {{ post.LABEL }}</label></li>
+		{% endfor %}
+		</ul>
+	</fieldset>
+
+	<fieldset aria-labelledby="transfer_destination_heading">
+		<h4 id="transfer_destination_heading">{{ lang('TITANIATOPICTRANSFER_DESTINATION') }}</h4>
+		<dl>
+			<dt><label for="contribution_id">{{ lang('TITANIATOPICTRANSFER_CONTRIB_ID') ~ lang('COLON') }}</label><br><span id="contribution_id_explain">{{ lang('TITANIATOPICTRANSFER_CONTRIB_ID_EXPLAIN') }}</span></dt>
+			<dd><input type="number" class="inputbox autowidth" id="contribution_id" name="contribution_id" min="1" required aria-describedby="contribution_id_explain"></dd>
+		</dl>
+		<dl>
+			<dt><label for="destination_id">{{ lang('TITANIATOPICTRANSFER_TOPIC_ID') ~ lang('COLON') }}</label><br><span id="destination_id_explain">{{ lang('TITANIATOPICTRANSFER_TOPIC_ID_EXPLAIN') }}</span></dt>
+			<dd><input type="number" class="inputbox autowidth" id="destination_id" name="destination_id" min="1" aria-describedby="destination_id_explain"></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset aria-labelledby="transfer_source_heading">
+		<h4 id="transfer_source_heading">{{ lang('TITANIATOPICTRANSFER_SOURCE') }}</h4>
+		<p><label><input type="checkbox" name="copy_topic" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_TOPIC') }}</label></p>
+		<dl>
+			<dt><label for="transfer_reason">{{ lang('TITANIATOPICTRANSFER_REASON') ~ lang('COLON') }}</label><br><span id="transfer_reason_explain">{{ lang('TITANIATOPICTRANSFER_REASON_EXPLAIN') }}</span></dt>
+			<dd><input type="text" class="inputbox" id="transfer_reason" name="reason" maxlength="255" aria-describedby="transfer_reason_explain"></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset aria-labelledby="transfer_options_heading">
+		<h4 id="transfer_options_heading">{{ lang('TITANIATOPICTRANSFER_OPTIONS') }}</h4>
+		<p><label><input type="checkbox" name="copy_subscriptions" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_SUBSCRIPTIONS') }}</label></p>
+		<p><label><input type="checkbox" name="copy_tracking" value="1"> {{ lang('TITANIATOPICTRANSFER_COPY_TRACKING') }}</label></p>
+		<p><label><input type="checkbox" name="notify_author" value="1"> {{ lang('TITANIATOPICTRANSFER_NOTIFY_AUTHOR') }}</label></p>
+	</fieldset>
+
+	<fieldset class="submit-buttons">
+		<button type="submit" class="button" name="submit">{{ lang('TITANIATOPICTRANSFER') }}</button>
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+	</div>
+</div>
+</form>
+
+{% include 'overall_footer.html' %}

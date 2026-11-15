@@ -1,0 +1,5 @@
+phpbbmodders_titaniatopictransfer_transfer:
+    path: /titania-transfer/{topic_id}
+    defaults: { _controller: phpbbmodders.titaniatopictransfer.preview:display }
+    requirements:
+        topic_id: '[1-9][0-9]*'
